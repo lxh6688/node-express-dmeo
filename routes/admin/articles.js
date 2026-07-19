@@ -4,7 +4,6 @@ const router = express.Router();
 const { Article } = require('../../models')
 
 router.get('/', async function (req, res, next) {
-
   try {
     const condition =  {
       order: [['id', 'desc']]
@@ -25,7 +24,33 @@ router.get('/', async function (req, res, next) {
       error: [error.message]
     })
   }
-  
+});
+
+router.get('/:id', async function (req, res, next) {
+  try {
+    const { id } = req.params;
+
+    const article = await Article.findByPk(id);
+
+    if(article){
+      res.json({ 
+        status: true,
+        message: '查询文章成功',
+        data: article
+      });
+    }else {
+      res.status(404).json({
+        status: false,
+        menubar: '查询文章未找到'
+      })
+    }
+  } catch (error) {
+    res.status(500).json({
+      status: false,
+      menubar: '查询文章列表失败',
+      error: [error.message]
+    })
+  }
 });
 
 module.exports = router;
