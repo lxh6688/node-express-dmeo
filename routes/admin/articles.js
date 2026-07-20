@@ -4,6 +4,7 @@ const { Op } = require('sequelize');
 
 const { Article } = require('../../models')
 
+//查询文章列表
 router.get('/', async function (req, res, next) {
   try {
     const query = req.query
@@ -49,6 +50,7 @@ router.get('/', async function (req, res, next) {
   }
 });
 
+//查询文章详情
 router.get('/:id', async function (req, res, next) {
   try {
     const { id } = req.params;
@@ -76,9 +78,11 @@ router.get('/:id', async function (req, res, next) {
   }
 });
 
+//创建文章
 router.post('/', async function (req, res, next) {
   try {
-    const article = await Article.create(req.body)
+    const body = filterBody(req)
+    const article = await Article.create(body)
 
     res.status(201).json({
       status: true,
@@ -94,6 +98,7 @@ router.post('/', async function (req, res, next) {
   }
 });
 
+//删除文章
 router.delete('/:id', async function (req, res, next) {
   try {
     const { id } = req.params;
@@ -122,14 +127,16 @@ router.delete('/:id', async function (req, res, next) {
   }
 });
 
+//更新文章
 router.put('/:id', async function (req, res, next) {
   try {
     const { id } = req.params;
+    const body = filterBody(req)
 
     const article = await Article.findByPk(id);
 
     if(article){
-      article.update(req.body)
+      article.update(body)
 
       res.json({ 
         status: true,
@@ -149,5 +156,13 @@ router.put('/:id', async function (req, res, next) {
     })
   }
 });
+
+function filterBody(req) {
+  // 强参数过滤
+  const body = {
+    title: req.body.title,
+    content: req.body.content
+  }
+}
 
 module.exports = router;
