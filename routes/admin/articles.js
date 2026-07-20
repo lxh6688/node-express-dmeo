@@ -20,7 +20,7 @@ router.get('/', async function (req, res, next) {
   } catch (error) {
     res.status(500).json({
       status:false,
-      menubar: '查询文章列表失败',
+      message: '查询文章列表失败',
       error: [error.message]
     })
   }
@@ -41,13 +41,31 @@ router.get('/:id', async function (req, res, next) {
     }else {
       res.status(404).json({
         status: false,
-        menubar: '查询文章未找到'
+        message: '查询文章未找到'
       })
     }
   } catch (error) {
     res.status(500).json({
       status: false,
-      menubar: '查询文章列表失败',
+      message: '查询文章列表失败',
+      error: [error.message]
+    })
+  }
+});
+
+router.post('/', async function (req, res, next) {
+  try {
+    const article = await Article.create(req.body)
+
+    res.status(201).json({
+      status: true,
+      message: '创建文章成功',
+      data: article
+    })
+  } catch (error) {
+    res.status(500).json({
+      status: false,
+      message: '创建文章失败',
       error: [error.message]
     })
   }
