@@ -8,8 +8,14 @@ router.get('/', async function (req, res, next) {
   try {
     const query = req.query
 
+    const currentPage = Math.abs(Number(query.currentPage)) || 1
+    const pageSize = Math.abs(Number(query.pageSize)) || 10
+    const offset = (currentPage - 1) * pageSize
+
     const condition =  {
-      order: [['id', 'desc']]
+      order: [['id', 'desc']],
+      limit: pageSize,
+      offset: offset
     }
 
     if(query.title){
@@ -20,12 +26,18 @@ router.get('/', async function (req, res, next) {
       }
     }
 
-    const articles = await Article.findAll(condition)
+    const { count, rows } = await Article.findAndCountAll(condition)
+
     res.json({ 
       status: true,
       message: '查询文章列表成功',
       data: { 
-        articles 
+        articles: rows,
+        pagination: {
+          total: count,
+          currentPage,
+          pageSize
+        }
       } 
     });
   } catch (error) {
