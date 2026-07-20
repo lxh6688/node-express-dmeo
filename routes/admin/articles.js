@@ -71,4 +71,32 @@ router.post('/', async function (req, res, next) {
   }
 });
 
+router.delete('/:id', async function (req, res, next) {
+  try {
+    const { id } = req.params;
+
+    const article = await Article.findByPk(id);
+
+    if(article){
+      article.destroy()
+
+      res.json({ 
+        status: true,
+        message: '删除文章成功'
+      });
+    }else {
+      res.status(404).json({
+        status: false,
+        message: '查询文章未找到'
+      })
+    }
+  } catch (error) {
+    res.status(500).json({
+      status: false,
+      message: '查询文章列表失败',
+      error: [error.message]
+    })
+  }
+});
+
 module.exports = router;
