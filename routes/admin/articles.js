@@ -90,11 +90,22 @@ router.post('/', async function (req, res, next) {
       data: article
     })
   } catch (error) {
-    res.status(500).json({
-      status: false,
-      message: '创建文章失败',
-      error: [error.message]
-    })
+    if(error.name === 'SequelizeValidationError') {
+      const errors = error.errors.map(e => e.message) 
+
+      res.status(400).json({
+        status: false,
+        message: '参数请求错误',
+        errors
+      })
+    }else {
+      res.status(500).json({
+        status: false,
+        message: '创建文章失败',
+        errors: [error.message]
+      })
+    }
+    
   }
 });
 
@@ -159,7 +170,7 @@ router.put('/:id', async function (req, res, next) {
 
 function filterBody(req) {
   // 强参数过滤
-  const body = {
+  return body = {
     title: req.body.title,
     content: req.body.content
   }
