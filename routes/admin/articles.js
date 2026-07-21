@@ -1,6 +1,11 @@
 const express = require('express');
 const router = express.Router();
 const { Op } = require('sequelize');
+const {
+  NotFoundError,
+  success,
+  failure
+} = require('../../utils/response')
 
 const { Article } = require('../../models')
 
@@ -22,59 +27,33 @@ router.get('/', async function (req, res, next) {
     if(query.title){
       condition.where = {
         title: {
-          [Op.like]:  `%${query.title}%`
+          [Op.like]: `%${query.title}%`
         }
       }
     }
 
     const { count, rows } = await Article.findAndCountAll(condition)
 
-    res.json({ 
-      status: true,
-      message: '查询文章列表成功',
-      data: { 
-        articles: rows,
-        pagination: {
-          total: count,
-          currentPage,
-          pageSize
-        }
-      } 
+    success(res, '查询文章列表成功', { 
+      articles: rows,
+      pagination: {
+        total: count,
+        currentPage,
+        pageSize
+      }
     });
   } catch (error) {
-    res.status(500).json({
-      status:false,
-      message: '查询文章列表失败',
-      error: [error.message]
-    })
+    failure(res, error)
   }
 });
 
 //查询文章详情
 router.get('/:id', async function (req, res, next) {
   try {
-    const { id } = req.params;
-
-    const article = await Article.findByPk(id);
-
-    if(article){
-      res.json({ 
-        status: true,
-        message: '查询文章成功',
-        data: article
-      });
-    }else {
-      res.status(404).json({
-        status: false,
-        message: '查询文章未找到'
-      })
-    }
+    const article = await getArticle(req);
+    success(res, '查询文章成功', { article })
   } catch (error) {
-    res.status(500).json({
-      status: false,
-      message: '查询文章列表失败',
-      error: [error.message]
-    })
+    failure(res, error)
   }
 });
 
@@ -83,97 +62,56 @@ router.post('/', async function (req, res, next) {
   try {
     const body = filterBody(req)
     const article = await Article.create(body)
-
-    res.status(201).json({
-      status: true,
-      message: '创建文章成功',
-      data: article
-    })
+    success(res, '创建文章成功', { article }, 201)
   } catch (error) {
-    if(error.name === 'SequelizeValidationError') {
-      const errors = error.errors.map(e => e.message) 
-
-      res.status(400).json({
-        status: false,
-        message: '参数请求错误',
-        errors
-      })
-    }else {
-      res.status(500).json({
-        status: false,
-        message: '创建文章失败',
-        errors: [error.message]
-      })
-    }
-    
+    failure(res, error)
   }
 });
 
 //删除文章
 router.delete('/:id', async function (req, res, next) {
   try {
-    const { id } = req.params;
-
-    const article = await Article.findByPk(id);
-
-    if(article){
-      article.destroy()
-
-      res.json({ 
-        status: true,
-        message: '删除文章成功'
-      });
-    }else {
-      res.status(404).json({
-        status: false,
-        message: '查询文章未找到'
-      })
-    }
+    const article = await getArticle(req);
+    await article.destroy()
+    success(res, '删除文章成功')
   } catch (error) {
-    res.status(500).json({
-      status: false,
-      message: '查询文章列表失败',
-      error: [error.message]
-    })
+    failure(res, error)
   }
 });
 
 //更新文章
 router.put('/:id', async function (req, res, next) {
   try {
-    const { id } = req.params;
     const body = filterBody(req)
+    const article = await Article.create(body)
 
-    const article = await Article.findByPk(id);
+    article.update(body)
 
-    if(article){
-      article.update(body)
-
-      res.json({ 
-        status: true,
-        message: '更新文章成功'
-      });
-    }else {
-      res.status(404).json({
-        status: false,
-        message: '文章未找到'
-      })
-    }
+    success(res, '更新文章成功')
   } catch (error) {
-    res.status(500).json({
-      status: false,
-      message: '更新文章列表失败',
-      error: [error.message]
-    })
+    failure(res, error)
   }
 });
 
+async function getArticle(req) {
+  const { id } = req.params;
+
+  const article = await Article.findByPk(id);
+
+  if(!article){
+    throw new NotFoundError(`ID: ${ id } 的文章未找到。`)
+  }
+
+  return article
+} 
+
 function filterBody(req) {
   // 强参数过滤
-  return body = {
+  const body = {
     title: req.body.title,
     content: req.body.content
   }
+  return body
 }
 
 module.exports = router;
