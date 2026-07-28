@@ -45,3 +45,18 @@ sequelize db:seed --seed xxx-article // 运行指定种子文件
 
 sequelize db:seed:all // 运行所有种子文件
 ```
+
+5. 其他表
+```
+sequelize model:generate --name Category --attributes name:string,rank:integer // Category表
+
+sequelize model:generate --name User --attributes email:string,username:string,password:string,nickname:string,sex:tinyint,company:string,introduce:text,role:tinyint // User表
+
+sequelize model:generate --name Course --attributes categoryId:integer,userId:integer,name:string,image:string,recommended:boolean,introductory:boolean,content:text,likesCount:integer,chaptersCount:integer // Course表
+
+sequelize model:generate --name Chapter --attributes courseId:integer,title:string,content:text,video:string,rank:integer // Chapter表
+
+sequelize model:generate --name Like --attributes courseId:integer,userId:integer // Like表
+
+sequelize model:generate --name Setting --attributes name:string,icp:string,copyright:string // Setting表
+```
