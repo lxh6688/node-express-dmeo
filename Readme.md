@@ -60,3 +60,13 @@ sequelize model:generate --name Like --attributes courseId:integer,userId:intege
 
 sequelize model:generate --name Setting --attributes name:string,icp:string,copyright:string // Setting表
 ```
+
+6. 添加、删除、修改字段
+```
+sequelize migration:create --name add-avatar-to-user
+```
+
+7. 管理员用户和普通用户
+```
+sequelize seed:generate --name user
+```

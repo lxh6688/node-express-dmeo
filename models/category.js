@@ -14,8 +14,35 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   Category.init({
-    name: DataTypes.STRING,
-    rank: DataTypes.INTEGER
+    name: {
+      type: DataTypes.STRING,
+      allowNull:false,
+      validate: {
+        notNull: {  msg: '名称必需存在。' },
+        notEmpty: { msg: '名称不能为空。' },
+        len: { args: [2, 45], msg: '名称长度需要在2 ~ 45个字符之间。' },
+      },
+      async isUnique(value) {
+        const user = await User.findOne({ where: { name: value } })
+        if(user) {
+          throw new Error('名称已存在, 请选择其他名称')
+        }
+      }
+    },
+    rank: {
+      type: DataTypes.STRING,
+      allowNull:false,
+      validate: {
+        notNull: {  msg: '排序必需存在。' },
+        notEmpty: { msg: '排序不能为空。' },
+        isInt: { msg: '排序必须为整数。' },
+        isPositive(value) {
+          if(value <= 0){
+            throw Error('排序必须是正整数。')
+          }
+        }
+      }
+    }
   }, {
     sequelize,
     modelName: 'Category',
