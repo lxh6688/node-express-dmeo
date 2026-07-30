@@ -2,6 +2,8 @@
 const {
   Model
 } = require('sequelize');
+const bcrypt = require('bcryptjs')
+
 module.exports = (sequelize, DataTypes) => {
   class User extends Model {
     /**
@@ -50,7 +52,13 @@ module.exports = (sequelize, DataTypes) => {
       validate: {
         notNull: {  msg: '密码必需填写。' },
         notEmpty: { msg: '密码不能为空。' },
-        len: { args: [6, 20], msg: '密码长度需要在6 ~ 20个字符之间。' },
+      },
+      set(value) {
+        if(value.length >= 6 && value.length <= 20) {
+          this.setDataValue('password', bcrypt.hashSync(value, 10))
+        } else {
+          throw new Error('密码长度需要在6 ~ 20个字符之间。')
+        }
       }
     },
     nickname: {
