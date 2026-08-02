@@ -47,7 +47,7 @@ function filterBody(req) {
   // 强参数过滤
   const body = {
     name: req.body.name,
-    icp: req.body.icp
+    icp: req.body.icp,
     copyright: req.body.copyright
   }
   return body

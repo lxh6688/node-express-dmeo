@@ -1,5 +1,5 @@
 const express = require('express');
-const adminSettingsRouterrouter = express.Router();
+const router = express.Router();
 const { Op } = require('sequelize');
 const {
   NotFoundError,
@@ -7,7 +7,7 @@ const {
   failure
 } = require('../../utils/response')
 
-const { Category } = require('../../models')
+const { Category, Course } = require('../../models')
 
 //查询分类列表
 router.get('/', async function (req, res, next) {
@@ -72,6 +72,12 @@ router.post('/', async function (req, res, next) {
 router.delete('/:id', async function (req, res, next) {
   try {
     const category = await getCategory(req);
+
+    const count = await Course.count({ where: { categoryId: req.params.id } })
+    if(count > 0) {
+      throw new Error('当前分类有课程, 无法删除')
+    }
+
     await category.destroy()
     success(res, '删除分类成功')
   } catch (error) {
