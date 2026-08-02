@@ -23,13 +23,13 @@ module.exports = (sequelize, DataTypes) => {
         notNull: {  msg: '邮箱必需填写。' },
         notEmpty: { msg: '邮箱不能为空。' },
         isEmail: { msg: '邮箱格式不正确。' },
-      },
-      async isUnique(value) {
-        const user = await User.findOne({ where: { email: value } })
-        if(user) {
-          throw new Error('邮箱已存在, 请直接登录')
+        async isUnique(value) {
+          const user = await User.findOne({ where: { email: value } })
+          if(user) {
+            throw new Error('邮箱已存在, 请直接登录')
+          }
         }
-      }
+      },
     },
     username: {
       type: DataTypes.STRING,
@@ -38,13 +38,13 @@ module.exports = (sequelize, DataTypes) => {
         notNull: {  msg: '用户名必需填写。' },
         notEmpty: { msg: '用户名不能为空。' },
         len: { args: [2, 45], msg: '用户名长度需要在2 ~ 45个字符之间。' },
-      },
-      async isUnique(value) {
-        const user = await User.findOne({ where: { username: value } })
-        if(user) {
-          throw new Error('用户名已存在, 请直接登录')
+        async isUnique(value) {
+          const user = await User.findOne({ where: { username: value } })
+          if(user) {
+            throw new Error('用户名已存在, 请直接登录')
+          }
         }
-      }
+      },
     },
     password: {
       type: DataTypes.STRING,

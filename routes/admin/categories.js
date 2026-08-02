@@ -19,7 +19,7 @@ router.get('/', async function (req, res, next) {
     const offset = (currentPage - 1) * pageSize
 
     const condition =  {
-      order: [['id', 'desc']],
+      order: [['rank', 'ASC'], ['id', 'ASC']],
       limit: pageSize,
       offset: offset
     }

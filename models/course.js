@@ -12,6 +12,7 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       models.Course.belongsTo(models.Category, { as: 'category' });
       models.Course.belongsTo(models.User, { as: 'user' });
+      models.Course.hasMany(models.Chapter, { as: 'chapters' });
     }
   }
   Course.init({
@@ -21,13 +22,13 @@ module.exports = (sequelize, DataTypes) => {
       validate: {
         notNull: {  msg: '分类ID必需填写。' },
         notEmpty: { msg: '分类ID不能为空。' },
-      },
-      async isPresent(value) {
-        const category = await sequelize.models.Category.findByPk(value)
-        if(!category) {
-          throw new Error(`ID为: ${value} 的分类不存在`)
+        async isPresent(value) {
+          const category = await sequelize.models.Category.findByPk(value)
+          if(!category) {
+            throw new Error(`ID为: ${value} 的分类不存在`)
+          }
         }
-      }
+      },
     },
     userId: {
       type: DataTypes.INTEGER,
@@ -35,13 +36,13 @@ module.exports = (sequelize, DataTypes) => {
       validate: {
         notNull: {  msg: '用户ID必需填写。' },
         notEmpty: { msg: '用户ID不能为空。' },
-      },
-      async isPresent(value) {
-        const category = await sequelize.models.Category.findByPk(value)
-        if(!category) {
-          throw new Error(`ID为: ${value} 的用户不存在`)
+        async isPresent(value) {
+          const category = await sequelize.models.Category.findByPk(value)
+          if(!category) {
+            throw new Error(`ID为: ${value} 的用户不存在`)
+          }
         }
-      }
+      },
     },
     name: {
       type: DataTypes.STRING,

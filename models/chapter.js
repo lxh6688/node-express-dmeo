@@ -10,14 +10,40 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      // define association here
+      models.Chapter.belongsTo(models.Course, { as: 'course' })
     }
   }
   Chapter.init({
-    courseId: DataTypes.INTEGER,
-    title: DataTypes.STRING,
+    courseId: {
+      type: DataTypes.INTEGER,
+      allowNull:false,
+      validate: {
+        notNull: {  msg: '课程ID必需填写。' },
+        notEmpty: { msg: '课程ID不能为空。' },
+        async isPresent(value) {
+          const course = await sequelize.models.Course.findByPk(value)
+          if(!course) {
+            throw new Error(`ID为: ${value} 的课程不存在`)
+          }
+        }
+      }
+    },
+    title: {
+      type: DataTypes.STRING,
+      allowNull:false,
+      validate: {
+        notNull: {  msg: '标题必需填写。' },
+        notEmpty: { msg: '标题不能为空。' },
+        len: { args: [2, 45], msg: '标题需要在2 ~ 45个字符之间。' },
+      }
+    },
     content: DataTypes.TEXT,
-    video: DataTypes.STRING,
+    video: {
+      type: DataTypes.STRING,
+      validate: {
+        isUrl: { msg: '视频地址不正确' }
+      }
+    },
     rank: DataTypes.INTEGER
   }, {
     sequelize,
