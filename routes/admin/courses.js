@@ -2,11 +2,8 @@ const express = require('express');
 const router = express.Router();
 const { Category, User, Course, Chapter } = require('../../models');
 const { Op } = require('sequelize');
-const {
-  NotFoundError,
-  success,
-  failure
-} = require('../../utils/response')
+const { NotFoundError } = require('../../utils/errors')
+const { success, failure } = require('../../utils/responses')
 
 //查询课程列表
 router.get('/', async function (req, res, next) {

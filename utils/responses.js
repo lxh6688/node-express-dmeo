@@ -1,10 +1,3 @@
-class NotFoundError extends Error{
-  constructor(message){
-    super(message);
-    this.name = "NotFoundError";
-  }
-}
-
 function success(res, message, data = {}, code = 200) {
   res.status(code).json({
     status: true,
@@ -20,6 +13,22 @@ function failure(res, error) {
       status: false,
       message: '参数请求错误',
       errors
+    })
+  }
+
+  if(error.name === 'BadRequestError') {
+    res.status(400).json({
+      status: false,
+      message: '请求参数错误',
+      errors: [error.message]
+    })
+  }
+
+  if(error.name === 'UnauthorizedError') {
+    res.status(401).json({
+      status: false,
+      message: '认证失败',
+      errors: [error.message]
     })
   }
 
@@ -39,7 +48,6 @@ function failure(res, error) {
 }
 
 module.exports = {
-  NotFoundError,
   success,
   failure
 }
