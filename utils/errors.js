@@ -28,7 +28,7 @@ class NotFoundError extends Error{
   }
 }
 
-GPUShaderModule.exports = {
+module.exports = {
   BadRequestError,
   UnauthorizedError,
   NotFoundError

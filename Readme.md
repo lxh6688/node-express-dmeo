@@ -66,7 +66,18 @@ sequelize model:generate --name Setting --attributes name:string,icp:string,copy
 sequelize migration:create --name add-avatar-to-user
 ```
 
-7. 管理员用户和普通用户
+7. 登录操作
+
+--
+  1. 用户发送邮箱、账号、密码
+  2. 基础验证
+  3. 接受login，而不接受 email 和 username
+  4. 通过login，查询数据库，判断用户是否存在
+  5. 验证密码是否正确
+  6. 验证是不是管理员
+  7. 使用 JWT 的包，生成 token
+  
+--
 ```
 sequelize seed:generate --name user
 ```
