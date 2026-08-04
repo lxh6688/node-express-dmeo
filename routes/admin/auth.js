@@ -6,6 +6,7 @@ const { BadRequestError, UnauthorizedError, NotFoundError } = require('../../uti
 const { success, failure } = require('../../utils/responses')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
+const crypto = require('crypto')
 
 /**
  * 管理员登录
@@ -13,6 +14,7 @@ const jwt = require('jsonwebtoken')
  */
 router.post('/sign_in', async function (req, res, next) {
   try {
+    console.log(crypto.randomBytes(32).toString('hex'))
     const { login, password } = req.body
 
     if(!login) {
