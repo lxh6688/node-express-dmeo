@@ -51,7 +51,7 @@ router.post('/sign_in', async function (req, res, next) {
 
     const token = jwt.sign({
       userId: user.id
-    }, 'hello', { expiresIn: '30d' })
+    }, process.env.SECRET, { expiresIn: '30d' })
 
     success(res, '登录成功', { token });
   } catch (error) {
