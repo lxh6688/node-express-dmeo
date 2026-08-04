@@ -5,6 +5,7 @@ const { Op } = require('sequelize');
 const { BadRequestError, UnauthorizedError, NotFoundError } = require('../../utils/errors')
 const { success, failure } = require('../../utils/responses')
 const bcrypt = require('bcryptjs')
+const jwt = require('jsonwebtoken')
 
 /**
  * 管理员登录
@@ -48,7 +49,11 @@ router.post('/sign_in', async function (req, res, next) {
       throw new UnauthorizedError('您没有权限登录管理员后台。')
     }
 
-    success(res, '登录成功', {});
+    const token = jwt.sign({
+      userId: user.id
+    }, 'hello', { expiresIn: '30d' })
+
+    success(res, '登录成功', { token });
   } catch (error) {
     failure(res, error)
   }
