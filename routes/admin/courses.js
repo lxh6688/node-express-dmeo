@@ -90,6 +90,9 @@ router.get('/:id', async function (req, res, next) {
 router.post('/', async function (req, res, next) {
   try {
     const body = filterBody(req)
+    // 获取当前登录的用户 ID
+    body.userId = req.user.id
+
     const course = await Course.create(body)
     success(res, '创建课程成功', { course }, 201)
   } catch (error) {
@@ -165,7 +168,6 @@ function filterBody(req) {
   // 强参数过滤
   const body = {
     categoryId: req.body.categoryId,
-    userId: req.body.userId,
     name: req.body.name,
     image: req.body.image,
     recommended: req.body.recommended,
