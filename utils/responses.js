@@ -1,5 +1,5 @@
 function success(res, message, data = {}, code = 200) {
-  res.status(code).json({
+  return res.status(code).json({
     status: true,
     message,
     data
@@ -9,7 +9,7 @@ function success(res, message, data = {}, code = 200) {
 function failure(res, error) {
   if(error.name === 'SequelizeValidationError') {
     const errors = error.errors.map(e => e.message) 
-    res.status(400).json({
+    return res.status(400).json({
       status: false,
       message: '参数请求错误',
       errors
@@ -17,7 +17,7 @@ function failure(res, error) {
   }
 
   if(error.name === 'BadRequestError') {
-    res.status(400).json({
+    return res.status(400).json({
       status: false,
       message: '请求参数错误',
       errors: [error.message]
@@ -25,22 +25,38 @@ function failure(res, error) {
   }
 
   if(error.name === 'UnauthorizedError') {
-    res.status(401).json({
+    return res.status(401).json({
       status: false,
       message: '认证失败',
       errors: [error.message]
     })
   }
 
+  if(error.name === 'JsonWebTokenError') {
+    return res.status(401).json({
+      status: false,
+      message: '认证失败',
+      errors: ['您提交的 token 错误']
+    })
+  }
+
+  if(error.name === 'TokenExpiredError') {
+    return res.status(401).json({
+      status: false,
+      message: '认证失败',
+      errors: ['您的 token 已过期']
+    })
+  }
+
   if(error.name === 'NotFoundError') {
-    res.status(404).json({
+    return res.status(404).json({
       status: false,
       message: '资源不存在',
       errors: [error.message]
     })
   }
 
-  res.status(500).json({
+  return res.status(500).json({
     status:false,
     message: '服务器错误',
     errors: [error.message]

@@ -2,6 +2,8 @@ const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
+const adminAuth = require('./middlewares/admin-auth')
+
 require('dotenv').config();
 
 const indexRouter = require('./routes/index');
@@ -28,9 +30,13 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 
-app.use('/admin/articles', adminArticlesRouter);
-app.use('/admin/categories', adminCategoryiesRouter);
-app.use('/admin/users', adminUsersRouter);
+app.use('/admin/articles', adminAuth, adminArticlesRouter);
+app.use('/admin/categories', adminAuth, adminCategoryiesRouter);
+app.use('/admin/settings', adminAuth, adminSettingsRouter);
+app.use('/admin/users', adminAuth, adminUsersRouter);
+app.use('/admin/courses', adminAuth, adminCoursesRouter);
+app.use('/admin/chapters', adminAuth, adminChaptersRouter);
+app.use('/admin/charts', adminAuth, adminChartsRouter);
 app.use('/admin/auth', adminAuthRouter);
 
 module.exports = app;
