@@ -32,7 +32,7 @@ router.get('/', async function(req, res, next) {
         currentPage,
         pageSize
       }
-     })
+    })
   } catch (error) {
     failure(res, error)
   }

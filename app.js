@@ -10,6 +10,10 @@ require('dotenv').config();
 const indexRouter = require('./routes/index');
 const categoriesRouter = require('./routes/categories');
 const coursesRouter = require('./routes/courses');
+const chaptersRouter = require('./routes/chapters');
+const articlesRouter = require('./routes/articles');
+const settingsRouter = require('./routes/settings');
+const searchRouter = require('./routes/search');
 
 const usersRouter = require('./routes/users');
 
@@ -35,6 +39,10 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', indexRouter);
 app.use('/categories', categoriesRouter);
 app.use('/courses', coursesRouter);
+app.use('/chapters', chaptersRouter);
+app.use('/articles', articlesRouter);
+app.use('/settings', settingsRouter);
+app.use('/search',searchRouter);
 
 app.use('/users', usersRouter);
 
