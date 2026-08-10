@@ -2,6 +2,9 @@
 const {
   Model
 } = require('sequelize');
+const moment = require('moment')
+moment.locale('zh-cn')
+
 module.exports = (sequelize, DataTypes) => {
   class Chapter extends Model {
     /**
@@ -44,7 +47,32 @@ module.exports = (sequelize, DataTypes) => {
         isUrl: { msg: '视频地址不正确' }
       }
     },
-    rank: DataTypes.INTEGER
+    rank: {
+      type: DataTypes.INTEGER,
+      allowNull:false,
+      validate: {
+        notNull: {  msg: '排序必需填写。' },
+        notEmpty: { msg: '排序不能为空。' },
+        isInt: { msg: '排序必须为整数。'  },
+        isPositive(value) {
+          if(value <= 0) {
+            throw new Error('排序必须是正整数。')
+          }
+        }
+      }
+    },
+    createdAt: {
+      type: DataTypes.DATE,
+      get(){
+        return moment(this.getDataValue("createdAt")).format("LL")
+      },
+    },
+    updatedAt: {
+      type: DataTypes.DATE,
+      get(){
+        return moment(this.getDataValue("updatedAt")).format("LL")
+      },
+    }
   }, {
     sequelize,
     modelName: 'Chapter',

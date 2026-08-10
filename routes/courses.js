@@ -43,7 +43,7 @@ router.get('/:id', async function(req, res, next) {
     const { id } = req.params
 
     const condition = {
-      attributes: { exclude: ['CategoryId', 'UserId', 'content' ] },
+      attributes: { exclude: ['CategoryId', 'UserId'] },
       include: [
         {
           model: Category,

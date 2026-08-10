@@ -2,6 +2,9 @@
 const {
   Model
 } = require('sequelize');
+const moment = require('moment')
+moment.locale('zh-cn')
+
 module.exports = (sequelize, DataTypes) => {
   class Course extends Model {
     /**
@@ -37,7 +40,7 @@ module.exports = (sequelize, DataTypes) => {
         notNull: {  msg: '用户ID必需填写。' },
         notEmpty: { msg: '用户ID不能为空。' },
         async isPresent(value) {
-          const category = await sequelize.models.Category.findByPk(value)
+          const category = await sequelize.models.User.findByPk(value)
           if(!category) {
             throw new Error(`ID为: ${value} 的用户不存在`)
           }
@@ -73,7 +76,20 @@ module.exports = (sequelize, DataTypes) => {
     },
     content: DataTypes.TEXT,
     likesCount: DataTypes.INTEGER,
-    chaptersCount: DataTypes.INTEGER
+    chaptersCount: DataTypes.INTEGER,
+    createdAt: {
+      type: DataTypes.DATE,
+      get(){
+        console.log('====',this.getDataValue(),'======')
+        return moment(this.getDataValue("createdAt")).format("YYYY-MM-DD HH:mm:ss")
+      },
+    },
+    updatedAt: {
+      type: DataTypes.DATE,
+      get(){
+        return moment(this.getDataValue("updatedAt")).format("YYYY年MM月DD日 HH:mm:ss")
+      },
+    }
   }, {
     sequelize,
     modelName: 'Course',
