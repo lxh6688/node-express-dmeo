@@ -12,10 +12,10 @@ const categoriesRouter = require('./routes/categories');
 const coursesRouter = require('./routes/courses');
 const chaptersRouter = require('./routes/chapters');
 const articlesRouter = require('./routes/articles');
+const usersRouter = require('./routes/users');
 const settingsRouter = require('./routes/settings');
 const searchRouter = require('./routes/search');
-
-const usersRouter = require('./routes/users');
+const authRouter = require('./routes/auth');
 
 //后台路由文件
 const adminArticlesRouter = require('./routes/admin/articles');
@@ -41,10 +41,10 @@ app.use('/categories', categoriesRouter);
 app.use('/courses', coursesRouter);
 app.use('/chapters', chaptersRouter);
 app.use('/articles', articlesRouter);
+app.use('/users', usersRouter);
 app.use('/settings', settingsRouter);
 app.use('/search',searchRouter);
-
-app.use('/users', usersRouter);
+app.use('/auth',authRouter);
 
 //后台路由配置
 app.use('/admin/articles', adminAuth, adminArticlesRouter);

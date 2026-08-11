@@ -1,17 +1,33 @@
 const express = require('express');
 const router = express.Router();
-const { User } = require('../../models');
+const { User } = require('../models');
 const { Op } = require('sequelize');
-const { BadRequestError, UnauthorizedError, NotFoundError } = require('../../utils/errors')
-const { success, failure } = require('../../utils/responses')
+const { BadRequestError, UnauthorizedError, NotFoundError } = require('../utils/errors')
+const { success, failure } = require('../utils/responses')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 const crypto = require('crypto')
 
-/**
- * 管理员登录
- * POST /admin/auth/sign_in
- */
+router.post('/sign_up', async function (req, res, next) {
+  try {
+    const body = {
+      email: req.body.email,
+      username: req.body.username,
+      nickname: req.body.nickname,
+      password: req.body.password,
+      sex: 2,
+      role: 0,
+    }
+
+    const user = await User.create(body)
+    delete user.dataValues.password
+
+    success(res, '创建用户成功', { user }, 201);
+  } catch (error) {
+    failure(res, error)
+  }
+});
+
 router.post('/sign_in', async function (req, res, next) {
   try {
     const { login, password } = req.body
@@ -43,11 +59,6 @@ router.post('/sign_in', async function (req, res, next) {
     const isPasswordVaild = bcrypt.compareSync(password, user.password)
     if(!isPasswordVaild) {
       throw new UnauthorizedError('密码错误。')
-    }
-
-    // 验证是否为管理员
-    if(user.role !== 100) {
-      throw new UnauthorizedError('您没有权限登录管理员后台。')
     }
 
     const token = jwt.sign({
