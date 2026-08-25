@@ -4,6 +4,7 @@ const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const adminAuth = require('./middlewares/admin-auth')
 const userAuth = require('./middlewares/user-auth')
+const cors = require('cors')
 
 require('dotenv').config();
 
@@ -36,6 +37,14 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+
+// CORS 跨域配置
+const corsOption = {
+  origin: [
+    'http://127.0.0.1:5500'
+  ]
+}
+app.use(cors(corsOption))
 
 //前台路由配置
 app.use('/', indexRouter);
